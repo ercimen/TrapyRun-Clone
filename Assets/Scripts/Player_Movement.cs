@@ -4,11 +4,23 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
-    [SerializeField] Data _data = null;
+    
+    [SerializeField] Data _data = null; // For speed
+    
+    // Move Variables
+    float _firstPressPos;
+    float _secondPressPos;
+    float _currentSwipe;
     Rigidbody _rb;
-    Animator _anim;
-
+    Animator _anim; 
+    
+    // For Box Pooling
     int _fallBoxNumber;
+
+
+    // Bool Status
+    bool _isAnimated;
+
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -22,32 +34,36 @@ public class Player_Movement : MonoBehaviour
     void FixedUpdate()
     {
         _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
-        Move();
+       
     }
 
-    private void Move()
+    private void Update()
     {
-        _anim.SetFloat("Speed", 1);
-        float y = Input.GetAxis("Horizontal");
+        Swipe();
+    }
 
-
-        if (y ==0)
+   
+    public void Swipe()
+    {
+        if (!_isAnimated)
         {
-          
-            transform.localEulerAngles = (new Vector3(0, 0, 0));
+            _anim.SetFloat("Speed", 1);
+            _isAnimated = true;
         }
+        if (Input.GetMouseButtonDown(0)) _firstPressPos = Input.mousePosition.x;
 
-        if (y > 0.1f)
-            {
-             
-                transform.localEulerAngles = (new Vector3(0, 45f, 0));
-            }
-            if (y < -0.1f)
-            {
-          
-            transform.localEulerAngles = (new Vector3(0, -45f, 0));
+        if (Input.GetMouseButton(0))
+        {
+            _secondPressPos = Input.mousePosition.x;
+            _currentSwipe = _secondPressPos - _firstPressPos;
+            
+            if (_currentSwipe < 0 ) transform.localRotation = Quaternion.Euler(0, -45, 0);
+      
+            if (_currentSwipe > 0 ) transform.localRotation = Quaternion.Euler(0, 45, 0); ;
         }
        
+        if (Input.GetMouseButtonUp(0)) transform.localRotation = Quaternion.Euler(0, 0, 0); ;
+
     }
 
     void RbChilds(bool state)
