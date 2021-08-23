@@ -5,10 +5,10 @@ using UnityEngine;
 public class Enemy1 : MonoBehaviour
 {
     [SerializeField] Data _data = null; // For speed
-    
+
     float _maxSpeed;
     float _distance;
-   
+
     Rigidbody _rb;
     Animator _anim;
 
@@ -26,59 +26,63 @@ public class Enemy1 : MonoBehaviour
         _anim = GetComponent<Animator>();
         RbChilds(true);
         ColChilds(false);
-        _maxSpeed =1.1f;
+        _maxSpeed = 1.1f;
         _anim.SetFloat("Speed", 1);
         _isJumped = false;
         _isDead = false;
-       
-        
+
+
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-       
-        if (_maxSpeed <= 1) _maxSpeed = 1f;
-        if (!_isDead && !_isJumped) _rb.velocity = transform.forward *_data._speed * Time.deltaTime * _maxSpeed;
-        //  if (_isblocked) _rb.velocity = transform.forward * _data._speed * Time.deltaTime*0.5f;
+        if (GameManager.Instance._isGameStarted)
+        {
+            if (_maxSpeed <= 1) _maxSpeed = 1f;
+            if (!_isDead && !_isJumped) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
+            //  if (_isblocked) _rb.velocity = transform.forward * _data._speed * Time.deltaTime*0.5f;
+        }
+
+
     }
 
     void LateUpdate()
     {
 
-        
-        _distance =  Vector3.Distance(GameManager.Instance._player.position, transform.position);
+
+        _distance = Vector3.Distance(GameManager.Instance._player.position, transform.position);
         Debug.Log(_distance);
-        if (GameManager.Instance._player.position.z-transform.position.z>1)
+        if (GameManager.Instance._player.position.z - transform.position.z > 1)
         {
-         _maxSpeed = ((_distance * 0.07f ) + 1.1f);
+            _maxSpeed = ((_distance * 0.07f) + 1.1f);
 
         }
-        else 
+        else
         {
             _maxSpeed = 1;
         }
-       
 
 
-       
-        if (_distance<=0.8f && !_isJumped)
+
+
+        if (_distance <= 0.8f && !_isJumped)
         {
             Player_Movement.Instance.Death();
             transform.LookAt(GameManager.Instance._player.position);
             _anim.SetTrigger("Jump");
             _rb.velocity = Vector3.zero;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(GameManager.Instance._player.position.x, 2.5f, GameManager.Instance._player.position.z),Time.deltaTime);
-          // transform.position = Vector3.Lerp(transform.position, GameManager.Instance._player.position,0.1f);
-           
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(GameManager.Instance._player.position.x, 2.5f, GameManager.Instance._player.position.z), Time.deltaTime);
+            // transform.position = Vector3.Lerp(transform.position, GameManager.Instance._player.position,0.1f);
+
             _timerJump += Time.deltaTime;
             Debug.Log("timer" + _timerJump);
-            if ( _timerJump >=0.10f)
+            if (_timerJump >= 0.10f)
             {
-              _isJumped = true;
-            
-            transform.position = GameManager.Instance._player.position;
+                _isJumped = true;
+
+                transform.position = GameManager.Instance._player.position;
                 Death();
             }
 
@@ -109,17 +113,17 @@ public class Enemy1 : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Killer"))
-        { 
+        {
             Death();
-          
-        }   
+
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.CompareTag("Killer")) Death();
     }
-  
+
     void Death()
     {
         _isDead = true;
@@ -130,5 +134,5 @@ public class Enemy1 : MonoBehaviour
         ColChilds(true);
     }
 
-    
+
 }

@@ -98,16 +98,19 @@ public class GameManager : MonoBehaviour
 
         _isGameStarted = true;
         if (!click)
-        {
+        {  
+            _levelno ++;
             StartCoroutine(ResourceTickOver(.5f, 1));
             click = true;
             inGamePanel.gameObject.SetActive(true);
+            PlayerPrefs.SetInt("level", _levelno);
+         
         }
     }
     IEnumerator ResourceTickOver(float waitTime, int level)
     {
         yield return new WaitForSeconds(waitTime);
-        if (SceneManager.GetActiveScene().buildIndex == 3)
+        if (SceneManager.GetActiveScene().buildIndex == 2)
         {
             SceneManager.LoadScene(0);
         }
