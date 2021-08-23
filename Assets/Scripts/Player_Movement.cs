@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
-    
+
     [SerializeField] Data _data = null; // For speed
-    
+
     // Move Variables
     float _firstPressPos;
     float _secondPressPos;
     float _currentSwipe;
     Rigidbody _rb;
-    Animator _anim; 
-    
+    Animator _anim;
+
     // For Box Pooling
     int _fallBoxNumber;
 
@@ -44,27 +44,29 @@ public class Player_Movement : MonoBehaviour
         _anim = GetComponent<Animator>();
         RbChilds(true);
         ColChilds(false);
-        
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!_isDead) _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
-      //  if (_isblocked) _rb.velocity = transform.forward * _data._speed * Time.deltaTime*0.5f;
+        if (GameManager.Instance.isGameStarted)
+        {
+            if (!_isDead) _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
+            //  if (_isblocked) _rb.velocity = transform.forward * _data._speed * Time.deltaTime*0.5f;
+        }
+
     }
 
     private void Update()
     {
-        if (!_isDead)
+        if (GameManager.Instance.isGameStarted)
         {
- Swipe();
+            if (!_isDead) Swipe();
         }
-           
-
     }
 
-   
+
     public void Swipe()
     {
         if (!_isAnimated)
@@ -78,12 +80,12 @@ public class Player_Movement : MonoBehaviour
         {
             _secondPressPos = Input.mousePosition.x;
             _currentSwipe = _secondPressPos - _firstPressPos;
-            
-            if (_currentSwipe < 0 ) transform.localRotation = Quaternion.Euler(0, -45, 0);
-      
-            if (_currentSwipe > 0 ) transform.localRotation = Quaternion.Euler(0, 45, 0); ;
+
+            if (_currentSwipe < 0) transform.localRotation = Quaternion.Euler(0, -45, 0);
+
+            if (_currentSwipe > 0) transform.localRotation = Quaternion.Euler(0, 45, 0); ;
         }
-       
+
         if (Input.GetMouseButtonUp(0)) transform.localRotation = Quaternion.Euler(0, 0, 0); ;
 
     }
@@ -111,6 +113,12 @@ public class Player_Movement : MonoBehaviour
     {
         if (other.CompareTag("Killer")) Death();
         if (other.CompareTag("Enemy")) Death();
+        if (other.CompareTag("Finish"))
+        {
+            other.gameObject.transform.GetChild(0).gameObject.SetActive(true); // Confeti
+GameManager.Instance.NextLevel();
+        }
+            
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -124,29 +132,29 @@ public class Player_Movement : MonoBehaviour
     {
         if (collision.collider.CompareTag("Ground") && !_isDead)
         {
-             _fallBoxNumber++;
-            if (_fallBoxNumber>=Object_Pool.Instance.FallBox.Length) _fallBoxNumber = 0;
+            _fallBoxNumber++;
+            if (_fallBoxNumber >= Object_Pool.Instance.FallBox.Length) _fallBoxNumber = 0;
             Object_Pool.Instance.FallBox[_fallBoxNumber].SetActive(true);
             Object_Pool.Instance.Notwalk[_fallBoxNumber].SetActive(true);
             collision.collider.gameObject.isStatic = false;
             collision.collider.gameObject.SetActive(false);
             Object_Pool.Instance.FallBox[_fallBoxNumber].gameObject.transform.position = collision.collider.gameObject.transform.position;
-            Object_Pool.Instance.Notwalk[_fallBoxNumber].gameObject.transform.position = collision.collider.gameObject.transform.position+new Vector3(0,0.5f,0);
-            StartCoroutine(Falling(0.5f,_fallBoxNumber));
+            Object_Pool.Instance.Notwalk[_fallBoxNumber].gameObject.transform.position = collision.collider.gameObject.transform.position + new Vector3(0, 0.5f, 0);
+            StartCoroutine(Falling(0.5f, _fallBoxNumber));
         }
 
     }
 
-    IEnumerator Falling(float _wait,int _currentNo) // Falling Boxes
+    IEnumerator Falling(float _wait, int _currentNo) // Falling Boxes
     {
-     //   yield return new WaitForSecondsRealtime(_wait);
-            Object_Pool.Instance.FallBox[_currentNo].GetComponent<Rigidbody>().isKinematic = false;
-            Object_Pool.Instance.FallBox[_currentNo].GetComponent<Animator>().enabled = true;
-          yield return new WaitForSecondsRealtime(_wait*4);
-            Object_Pool.Instance.FallBox[_currentNo].SetActive(false);
-            Object_Pool.Instance.Notwalk[_currentNo].SetActive(false);
-            Object_Pool.Instance.FallBox[_currentNo].GetComponent<Animator>().enabled = false;
-            Object_Pool.Instance.FallBox[_currentNo].GetComponent<Rigidbody>().isKinematic = true;
+        //   yield return new WaitForSecondsRealtime(_wait);
+        Object_Pool.Instance.FallBox[_currentNo].GetComponent<Rigidbody>().isKinematic = false;
+        Object_Pool.Instance.FallBox[_currentNo].GetComponent<Animator>().enabled = true;
+        yield return new WaitForSecondsRealtime(_wait * 5);
+        Object_Pool.Instance.FallBox[_currentNo].SetActive(false);
+        Object_Pool.Instance.Notwalk[_currentNo].SetActive(false);
+        Object_Pool.Instance.FallBox[_currentNo].GetComponent<Animator>().enabled = false;
+        Object_Pool.Instance.FallBox[_currentNo].GetComponent<Rigidbody>().isKinematic = true;
     }
 
     public void Death()
@@ -156,7 +164,7 @@ public class Player_Movement : MonoBehaviour
 
         _isDead = true;
         _anim.enabled = false;
-        
+
         RbChilds(false);
         ColChilds(true);
     }

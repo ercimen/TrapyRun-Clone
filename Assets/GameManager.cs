@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
             isGameStarted = false;
         }
         inGamePanel.gameObject.SetActive(false);
+        TapToPlay.gameObject.SetActive(true);
 
 
     }
@@ -78,6 +79,7 @@ public class GameManager : MonoBehaviour
     {
         inGamePanel.SetActive(false);
         GameOverPanel.SetActive(true);
+        isGameStarted = false;
     }
     public void NextLevel()
     {
@@ -86,7 +88,7 @@ public class GameManager : MonoBehaviour
     }
     public void NextLevelButton()
     {
-       
+
         isGameStarted = true;
         if (!click)
         {
@@ -108,8 +110,8 @@ public class GameManager : MonoBehaviour
         }
 
     }
-  
-    public void TapTap()
+
+    public void TaptoPlay()
     {
         isGameStarted = true;
         TapToPlay.gameObject.SetActive(false);
@@ -125,11 +127,12 @@ public class GameManager : MonoBehaviour
     {
         if (!_isPlayerDead)
         {
-        _isCam2Active = true;
-        _isPlayerDead = true;
-        Camera1.gameObject.SetActive(false);
-        Camera2.transform.position = Camera1.transform.position;
-        Camera2.gameObject.SetActive(true);
+            GameOver();
+            _isCam2Active = true;
+            _isPlayerDead = true;
+            Camera1.gameObject.SetActive(false);
+            Camera2.transform.position = Camera1.transform.position;
+            Camera2.gameObject.SetActive(true);
         }
     }
 
