@@ -129,4 +129,6 @@ public class Enemy1 : MonoBehaviour
         RbChilds(false);
         ColChilds(true);
     }
+
+    
 }

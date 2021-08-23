@@ -26,7 +26,8 @@ public class GameManager : MonoBehaviour
     public Text LevelTxt;
     int _levelno;
 
-    public bool isGameStarted;
+    public bool _isGameStarted;
+    public bool _isWinLevel;
     bool click; //nextlevel doubleclick check
 
 
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
-            isGameStarted = false;
+            _isGameStarted = false;
         }
         inGamePanel.gameObject.SetActive(false);
         TapToPlay.gameObject.SetActive(true);
@@ -79,17 +80,23 @@ public class GameManager : MonoBehaviour
     {
         inGamePanel.SetActive(false);
         GameOverPanel.SetActive(true);
-        isGameStarted = false;
+        _isGameStarted = false;
     }
     public void NextLevel()
     {
         inGamePanel.SetActive(false);
         NextLevelPanel.SetActive(true);
+        _isCam2Active = true;
+        _isWinLevel = true;
+        _isGameStarted = false;
+        Camera1.gameObject.SetActive(false);
+        Camera2.transform.position = Camera1.transform.position;
+        Camera2.gameObject.SetActive(true);
     }
     public void NextLevelButton()
     {
 
-        isGameStarted = true;
+        _isGameStarted = true;
         if (!click)
         {
             StartCoroutine(ResourceTickOver(.5f, 1));
@@ -113,7 +120,7 @@ public class GameManager : MonoBehaviour
 
     public void TaptoPlay()
     {
-        isGameStarted = true;
+        _isGameStarted = true;
         TapToPlay.gameObject.SetActive(false);
         inGamePanel.gameObject.SetActive(true);
     }

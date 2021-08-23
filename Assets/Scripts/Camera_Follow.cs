@@ -21,10 +21,14 @@ public class Camera_Follow : MonoBehaviour
     void Update()
     {
         if (!GameManager.Instance._isCam2Active) transform.position = new Vector3(0,0,_player.position.z) + _offset;
-        if (GameManager.Instance._isCam2Active)
+        if (GameManager.Instance._isCam2Active && !GameManager.Instance._isWinLevel)
         {  
           transform.position =  Vector3.Lerp(transform.position,new Vector3(_player2.position.x, (_player2.position.y+3),(_player2.position.z-5)),  _speed*Time.deltaTime);
         }
-            
+        if (GameManager.Instance._isCam2Active && GameManager.Instance._isWinLevel)
+        {
+            transform.position = Vector3.Lerp(transform.position, new Vector3(_player2.position.x, (_player2.position.y + 15), (_player2.position.z - 25)), _speed * Time.deltaTime);
+        }
+
     }
 }
