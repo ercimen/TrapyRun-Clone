@@ -6,6 +6,10 @@ TagManager:
   tags:
   - PlayerTrig
   - Ground
+  - Platform
+  - Killer
+  - Block
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -15,9 +19,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Enemy
+  - Notwalk
+  - SmallEnemy
   - 
   - 
   - 

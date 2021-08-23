@@ -6,5 +6,5 @@ using UnityEngine;
 public class Data : ScriptableObject
 {
     [SerializeField] public float _speed;
-
+    [SerializeField] public float _propSpeed;
 }

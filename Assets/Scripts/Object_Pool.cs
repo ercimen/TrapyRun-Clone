@@ -5,6 +5,7 @@ using UnityEngine;
 public class Object_Pool : MonoBehaviour
 {
     [SerializeField] public GameObject[] FallBox;
+    [SerializeField] public GameObject[] Notwalk;
     #region Singleton
 
     private static Object_Pool _instance;
