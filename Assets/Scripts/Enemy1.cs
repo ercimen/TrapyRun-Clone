@@ -41,6 +41,7 @@ public class Enemy1 : MonoBehaviour
     {
         if (_isStart)
         {
+            GroundCheck();
             if (_maxSpeed <= 1) _maxSpeed = 1f;
             if (!_isDead && !_isJumped) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
         }
@@ -48,6 +49,11 @@ public class Enemy1 : MonoBehaviour
     }
 
     void LateUpdate()
+    {
+        JumpAttack();
+    }
+
+    void JumpAttack()
     {
         _distance = Vector3.Distance(GameManager.Instance._player.position, transform.position);
 
@@ -80,7 +86,6 @@ public class Enemy1 : MonoBehaviour
         }
     }
 
-
     void RbChilds(bool state)
     {
         Rigidbody[] rbc = GetComponentsInChildren<Rigidbody>();
@@ -100,16 +105,6 @@ public class Enemy1 : MonoBehaviour
         gameObject.GetComponent<Collider>().enabled = true;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Killer")) Death();
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Killer")) Death();
-    }
-
     void Death()
     {
         _isDead = true;
@@ -118,6 +113,41 @@ public class Enemy1 : MonoBehaviour
         _rb.GetComponent<Collider>().enabled = false;
         RbChilds(false);
         ColChilds(true);
+    }
+    void DeathFall()
+    {
+        _isDead = true;
+        StartCoroutine(DeathTime(0.1f));
+       
+    }
+
+    IEnumerator DeathTime(float waitTime)
+    {
+        yield return new WaitForSecondsRealtime(waitTime);
+        _anim.enabled = false;
+        _rb.GetComponent<Collider>().enabled = false;
+        RbChilds(false);
+        ColChilds(false);
+    }
+
+    void GroundCheck()
+    {
+
+        RaycastHit hit;
+        float distance = 1f;
+        Vector3 dir = new Vector3(0, -1f, 0f);
+        Vector3 dir2 = new Vector3(0, -1f, 0.3f);
+
+        if (!Physics.Raycast(transform.position, dir, out hit, distance))
+        {
+            if (!Physics.Raycast(transform.position + new Vector3(0.1f, 0, 0.45f), dir2, out hit, distance))
+            {
+                DeathFall();
+            }
+
+        }
+        // Debug.DrawRay(transform.position, dir, Color.green);
+        // Debug.DrawRay(transform.position + new Vector3(0, 0, 0.3f), dir, Color.red);
     }
 
     void StartNow(bool status)

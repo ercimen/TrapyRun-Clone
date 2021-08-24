@@ -16,12 +16,13 @@ public class Player_Movement : MonoBehaviour
 
     // For Box Pooling
     int _fallBoxNumber;
-
+    int count;
 
     // Bool Status
     bool _isAnimated;
     bool _isDead;
     bool _isStart;
+    bool _isGround;
 
     #region Singleton
 
@@ -54,6 +55,7 @@ public class Player_Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        GroundCheck();
         if (_isStart)
         {
             if (!_isDead) _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
@@ -131,7 +133,6 @@ public class Player_Movement : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("Killer")) Death();
         if (collision.collider.CompareTag("Enemy")) Death();
     }
 
@@ -175,6 +176,31 @@ public class Player_Movement : MonoBehaviour
         RbChilds(false);
         ColChilds(true);
     }
+
+    void GroundCheck()
+    {
+
+        RaycastHit hit;
+        float distance = 1f;
+        Vector3 dir = new Vector3(0, -1f, 0f);
+        Vector3 dir2 = new Vector3(0, -1f, 0.3f);
+
+        if (!Physics.Raycast(transform.position, dir, out hit, distance))
+        {
+            if (!Physics.Raycast(transform.position +new Vector3(0.1f,0,0.45f), dir2, out hit, distance))
+            {
+                if (!Physics.Raycast(transform.position + new Vector3(-0.1f, 0, 0.45f), dir2, out hit, distance))
+                {
+                    // Time.timeScale = 0;
+                    Death();
+                }
+            }
+
+        }
+      //   Debug.DrawRay(transform.position, dir, Color.green);
+      //   Debug.DrawRay(transform.position + new Vector3(0.1f, 0, 0.45f), dir, Color.red);
+    }
+
     void StartNow(bool status)
     {
         _isStart = status;

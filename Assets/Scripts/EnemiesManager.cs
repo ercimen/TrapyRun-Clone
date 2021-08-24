@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemiesManager : MonoBehaviour
 {
@@ -18,6 +19,16 @@ public class EnemiesManager : MonoBehaviour
             Object_Pool.Instance.Enemies1[_enemyNo].transform.position = new Vector3(Random.Range(0, 9), 0.86f, Random.Range(0, 10));
             Object_Pool.Instance.Enemies1[_enemyNo].SetActive(true);
             _enemyNo++;
+        }
+
+        if (SceneManager.GetActiveScene().buildIndex>0)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Object_Pool.Instance.Enemies2[_enemyNo2].transform.position = new Vector3(Random.Range(0, 9), 0.86f, Random.Range(0, 10));
+                Object_Pool.Instance.Enemies2[_enemyNo2].SetActive(true);
+                _enemyNo2++;
+            }
         }
     }
     void CreateEnemy()

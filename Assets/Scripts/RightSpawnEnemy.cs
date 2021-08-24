@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyClone : MonoBehaviour
+public class RightSpawnEnemy : MonoBehaviour
 {
     [SerializeField] Data _data = null; // For speed
-
+    [SerializeField] bool _isRight;
     float _maxSpeed;
     float _distance;
 
@@ -13,11 +13,13 @@ public class EnemyClone : MonoBehaviour
     Animator _anim;
 
     float _timerJump;
-
+    float _randomStartPos;
     // Bool Status
     bool _isJumped;
     bool _isDead;
     bool _isStart;
+    bool _isMainRoad;
+
 
     void Awake()
     {
@@ -29,19 +31,58 @@ public class EnemyClone : MonoBehaviour
         _anim.SetFloat("Speed", 1);
         _isJumped = false;
         _isDead = false;
+
+        if (_isRight)
+        {
+            _randomStartPos = Random.Range(5, 8);
+        }
+        else
+        {
+            _randomStartPos = Random.Range(0, 4);
+        }
+
     }
 
-    // Update is called once per frame
+    private void Start()
+    {
+        GameManager.StartGame += StartNow;
+    }
+
     void FixedUpdate()
     {
-        GroundCheck();
-        if (_maxSpeed <= 1) _maxSpeed = 1f;
-        if (!_isDead && !_isJumped) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
+        if (_isStart)
+        {
+            GroundCheck();
+            if (_maxSpeed <= 1) _maxSpeed = 1f;
+            if (!_isDead && !_isJumped && !_isMainRoad) _rb.velocity = transform.forward * _data._speed * 0.45f * Time.deltaTime * _maxSpeed;
+            if (!_isDead && !_isJumped && _isMainRoad) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
+        }
     }
 
     void LateUpdate()
     {
         JumpAttack();
+        GotoMainRoad();
+    }
+
+    void GotoMainRoad()
+    {
+        if (_isRight)
+        {
+            if (transform.position.x <= _randomStartPos && !_isMainRoad)
+            {
+                transform.localRotation = Quaternion.Euler(0, 0, 0);
+                _isMainRoad = true;
+            }
+        }
+        else
+        {
+            if (transform.position.x >= _randomStartPos && !_isMainRoad)
+            {
+                transform.localRotation = Quaternion.Euler(0, 0, 0);
+                _isMainRoad = true;
+            }
+        }
     }
 
     void JumpAttack()
@@ -148,8 +189,10 @@ public class EnemyClone : MonoBehaviour
             }
 
         }
-        // Debug.DrawRay(transform.position, dir, Color.green);
-        // Debug.DrawRay(transform.position + new Vector3(0, 0, 0.3f), dir, Color.red);
-    }
 
+    }
+    void StartNow(bool status)
+    {
+        _isStart = status;
+    }
 }
