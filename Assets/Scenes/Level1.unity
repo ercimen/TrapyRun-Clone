@@ -43958,7 +43958,6 @@ MonoBehaviour:
   NextLevelPanel: {fileID: 435777609}
   TapToPlay: {fileID: 927265268}
   LevelTxt: {fileID: 1412697869}
-  _isGameStarted: 0
   _isWinLevel: 0
 --- !u!4 &1841886049
 Transform:
@@ -51417,7 +51416,7 @@ PrefabInstance:
     - target: {fileID: 643073513264465514, guid: 5133ca09ec5cca1439b4c722b86b3cb1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.81
+      value: 4.29
       objectReference: {fileID: 0}
     - target: {fileID: 643073513264465514, guid: 5133ca09ec5cca1439b4c722b86b3cb1,
         type: 3}
@@ -51427,7 +51426,7 @@ PrefabInstance:
     - target: {fileID: 643073513264465514, guid: 5133ca09ec5cca1439b4c722b86b3cb1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 80
+      value: 84.77
       objectReference: {fileID: 0}
     - target: {fileID: 643073513264465514, guid: 5133ca09ec5cca1439b4c722b86b3cb1,
         type: 3}

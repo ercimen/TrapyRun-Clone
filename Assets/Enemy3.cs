@@ -65,7 +65,6 @@ public class Enemy3 : MonoBehaviour
         foreach (Collider ChildCol in Colc)
         {
             ChildCol.enabled = state;
-
         }
         gameObject.GetComponent<Collider>().enabled = true;
     }

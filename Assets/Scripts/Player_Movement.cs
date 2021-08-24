@@ -21,7 +21,7 @@ public class Player_Movement : MonoBehaviour
     // Bool Status
     bool _isAnimated;
     bool _isDead;
-    bool _isblocked;
+    bool _isStart;
 
     #region Singleton
 
@@ -47,25 +47,28 @@ public class Player_Movement : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    private void Start()
+    {
+        GameManager.StartGame += StartNow;
+    }
+
     void FixedUpdate()
     {
-        if (GameManager.Instance._isGameStarted)
+        if (_isStart)
         {
             if (!_isDead) _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
-            //  if (_isblocked) _rb.velocity = transform.forward * _data._speed * Time.deltaTime*0.5f;
         }
         else if (GameManager.Instance._isWinLevel)
         {
             transform.localRotation = Quaternion.Euler(0, 0, 0);
-          _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
+            _rb.velocity = transform.forward * _data._speed * Time.deltaTime;
         }
 
     }
 
     private void Update()
     {
-        if (GameManager.Instance._isGameStarted)
+        if (_isStart)
         {
             if (!_isDead) Swipe();
         }
@@ -104,6 +107,7 @@ public class Player_Movement : MonoBehaviour
         }
         gameObject.GetComponent<Rigidbody>().isKinematic = false;
     }
+
     void ColChilds(bool state)
     {
         Collider[] Colc = GetComponentsInChildren<Collider>();
@@ -123,15 +127,13 @@ public class Player_Movement : MonoBehaviour
             other.gameObject.transform.GetChild(0).gameObject.SetActive(true); // Confeti
             GameManager.Instance.NextLevel();
         }
-            
+
     }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.CompareTag("Killer")) Death();
         if (collision.collider.CompareTag("Enemy")) Death();
     }
-
-
 
     private void OnCollisionExit(Collision collision)
     {
@@ -172,5 +174,9 @@ public class Player_Movement : MonoBehaviour
 
         RbChilds(false);
         ColChilds(true);
+    }
+    void StartNow(bool status)
+    {
+        _isStart = status;
     }
 }

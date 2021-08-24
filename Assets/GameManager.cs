@@ -7,30 +7,6 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Player")]
-    public Transform _player;
-    public Transform _player_Hips;
-    public bool _isPlayerDead;
-
-    [Header("Cameras")]
-    public GameObject Camera1;
-    public GameObject Camera2;
-    public bool _isCam2Active;
-
-    [Header("Panels")]
-    public GameObject inGamePanel;
-    public GameObject GameOverPanel;
-    public GameObject NextLevelPanel;
-    public GameObject TapToPlay;
-    [Header("Other")]
-    public Text LevelTxt;
-    int _levelno;
-
-    public bool _isGameStarted;
-    public bool _isWinLevel;
-    bool click; //nextlevel doubleclick check
-
-
     #region Singleton
 
     private static GameManager _instance;
@@ -45,16 +21,39 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
+
+    [Header("Player")]
+    public Transform _player;
+    public Transform _player_Hips;
+    public bool _isPlayerDead;
+
+    [Header("Cameras")]
+    public GameObject Camera1;
+    public GameObject Camera2;
+   
+
+    [Header("Panels")]
+    public GameObject inGamePanel;
+    public GameObject GameOverPanel;
+    public GameObject NextLevelPanel;
+    public GameObject TapToPlay;
+    [Header("Other")]
+    public Text LevelTxt;
+    int _levelno;
+
+   
+    public bool _isWinLevel;
+    bool click; //nextlevel doubleclick check
+
+    public delegate void GameStart(bool status);
+    public static event GameStart StartGame;
+    public delegate void Cam2(String cam);
+    public static event Cam2 Cam2Active;
+
     private void Awake()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 0)
-        {
-            _isGameStarted = false;
-        }
         inGamePanel.gameObject.SetActive(false);
         TapToPlay.gameObject.SetActive(true);
-
-
     }
     private void Start()
     {
@@ -70,41 +69,38 @@ public class GameManager : MonoBehaviour
         }
 
         LevelTxt.text = _levelno.ToString();
-        _isCam2Active = false;
+        Cam2Active("FirstCam");
         Camera1.gameObject.SetActive(true);
         Camera2.gameObject.SetActive(false);
-
     }
 
     public void GameOver()
     {
         inGamePanel.SetActive(false);
         GameOverPanel.SetActive(true);
-        _isGameStarted = false;
+        StartGame(false);
     }
     public void NextLevel()
     {
         inGamePanel.SetActive(false);
         NextLevelPanel.SetActive(true);
-        _isCam2Active = true;
+        Cam2Active("WinCam");
         _isWinLevel = true;
-        _isGameStarted = false;
+        StartGame(false);
         Camera1.gameObject.SetActive(false);
         Camera2.transform.position = Camera1.transform.position;
         Camera2.gameObject.SetActive(true);
     }
     public void NextLevelButton()
     {
-
-        _isGameStarted = true;
+        StartGame(true);
         if (!click)
         {  
             _levelno ++;
             StartCoroutine(ResourceTickOver(.5f, 1));
             click = true;
             inGamePanel.gameObject.SetActive(true);
-            PlayerPrefs.SetInt("level", _levelno);
-         
+            PlayerPrefs.SetInt("level", _levelno);         
         }
     }
     IEnumerator ResourceTickOver(float waitTime, int level)
@@ -123,7 +119,7 @@ public class GameManager : MonoBehaviour
 
     public void TaptoPlay()
     {
-        _isGameStarted = true;
+        StartGame(true);
         TapToPlay.gameObject.SetActive(false);
         inGamePanel.gameObject.SetActive(true);
     }
@@ -138,12 +134,11 @@ public class GameManager : MonoBehaviour
         if (!_isPlayerDead)
         {
             GameOver();
-            _isCam2Active = true;
+            Cam2Active("DeathCam");
             _isPlayerDead = true;
             Camera1.gameObject.SetActive(false);
             Camera2.transform.position = Camera1.transform.position;
             Camera2.gameObject.SetActive(true);
         }
     }
-
 }

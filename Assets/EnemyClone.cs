@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy1 : MonoBehaviour
+public class EnemyClone : MonoBehaviour
 {
     [SerializeField] Data _data = null; // For speed
 
@@ -31,20 +31,11 @@ public class Enemy1 : MonoBehaviour
         _isDead = false;
     }
 
-    private void Start()
-    {
-        GameManager.StartGame += StartNow;
-    }
-
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (_isStart)
-        {
-            if (_maxSpeed <= 1) _maxSpeed = 1f;
-            if (!_isDead && !_isJumped) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
-        }
-
+        if (_maxSpeed <= 1) _maxSpeed = 1f;
+        if (!_isDead && !_isJumped) _rb.velocity = transform.forward * _data._speed * Time.deltaTime * _maxSpeed;
     }
 
     void LateUpdate()
@@ -59,6 +50,7 @@ public class Enemy1 : MonoBehaviour
         {
             _maxSpeed = 1;
         }
+
 
         if (_distance <= 0.8f && !_isJumped)
         {
@@ -96,6 +88,7 @@ public class Enemy1 : MonoBehaviour
         foreach (Collider ChildCol in Colc)
         {
             ChildCol.enabled = state;
+
         }
         gameObject.GetComponent<Collider>().enabled = true;
     }
@@ -120,8 +113,4 @@ public class Enemy1 : MonoBehaviour
         ColChilds(true);
     }
 
-    void StartNow(bool status)
-    {
-        _isStart = status;
-    }
 }

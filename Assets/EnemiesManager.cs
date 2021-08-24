@@ -6,9 +6,12 @@ public class EnemiesManager : MonoBehaviour
 {
     int _enemyNo,_enemyNo2,_enemyNo3;
     [SerializeField] float _spawmTime=1;
+
+    bool _isStart;
     void Start()
     {
-         InvokeRepeating("CreateEnemy", _spawmTime, _spawmTime);
+        GameManager.StartGame += StartNow;
+        InvokeRepeating("CreateEnemy", _spawmTime, _spawmTime);
 
         for (int i = 0; i < 20; i++)
         {
@@ -17,14 +20,12 @@ public class EnemiesManager : MonoBehaviour
             _enemyNo++;
         }
     }
-
     void CreateEnemy()
     {
-        if (GameManager.Instance._isGameStarted)
+        if (_isStart)
         {
             int _rnd = Random.Range(0, 100);
           
-
             if (_rnd < 65)
             {
                 float _randomX = Random.Range(0, 9);
@@ -54,5 +55,9 @@ public class EnemiesManager : MonoBehaviour
             }
 
         }
+    }
+    void StartNow(bool status)
+    {
+        _isStart = status;
     }
 }
